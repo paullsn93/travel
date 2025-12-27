@@ -3,7 +3,7 @@ import {
   MapPin, Calendar, Clock, X, Share2, Music, Coffee, Camera, Utensils, 
   ArrowRight, ChevronDown, ChevronUp, Users, Image as ImageIcon, Youtube, 
   DollarSign, Star, Map as MapIcon, Leaf, CloudFog, Mountain, Tent, 
-  CheckSquare, Info, Sunset, Sunrise, AlertTriangle, ExternalLink
+  CheckSquare, Info, Sunset, Sunrise, AlertTriangle, ExternalLink, Activity
 } from 'lucide-react';
 
 // --- 資料區：未來行程 (下一站，去哪裡) ---
@@ -232,14 +232,21 @@ const pastTrips = [
     title: "🏔️ 嘉義梅山太平 · 車宿＋登山三日遊",
     date: "2025.12.17 - 2025.12.19",
     location: "嘉義・梅山太平",
-    // 修正 1：背景圖片改用您提供的 Google 相簿連結
-    // 注意：Google 相簿分享連結 (photos.app.goo.gl) 有時無法直接顯示為圖片，若顯示失敗建議使用直接圖片網址 (.jpg)
     coverImage: "https://lh3.googleusercontent.com/pw/AP1GczNurQzdqNgImUwfVmvnT07s2fPqglBGPPPsr_p-RruUAvPp_SUSobh9xYksA02VOd7lKTWvhaPzkkextxn6YIcO8nzI5Rc_39yrAZrfQ5LRsGxUkvnDl2l8jZIxjFHQPHvvsVSlekrSeC0E_X6XAg1lUQ=w3209-h1805-s-no-gm?authuser=1", 
     description: "三天兩夜輕量車宿行程，以太平老街為基地，串起杉林溪谷、茶園吊橋、太平五連峰縱走與大巃頂、奉天岩晨走，一路用泡麵、茶具與夜景填滿旅行細節。",
     tags: ["車宿", "登山", "五連峰", "茶園"],
     companions: "邱家、凌家、曾家、羅家共8人",
     albumUrl: "https://photos.app.goo.gl/r6VEVFTvFZPT3TzY7", 
-    videoUrl: "",
+    videos: [
+      { title: "Day 1 車宿炊煮", url: "https://youtu.be/h5jfewlvLK8" },
+      { title: "Day 2 五連峰", url: "https://youtu.be/XHXWnKXdmmA" }
+    ],
+    // 新增 Relive 軌跡影片資料
+    relives: [
+      { title: "雲嘉五連峰縱走", url: "https://www.relive.com/zh-TW/view/v1Owk1yM7EO" },
+      { title: "孝子路步道O型", url: "https://www.relive.com/zh-TW/view/vAOZm2Ykpov" }
+    ],
+    videoUrl: "", 
     rating: 5,
     budget: "據點：57 秘密基地",
     checklists: [
@@ -271,7 +278,8 @@ const pastTrips = [
           { 
             time: "10:30", 
             icon: <Tent size={16}/>, 
-            title: "抵達 57 秘密基地", 
+            // 修改：加入 57 秘密基地超連結
+            title: <span>抵達 <a href="https://www.relive.com/zh-TW/view/vAOZm2Ykpov" target="_blank" rel="noopener noreferrer" className="text-teal-600 underline hover:text-teal-800 font-bold">57 秘密基地</a></span>, 
             description: "停好車、調整車內睡眠空間，確認電源、照明與煮食動線，順手整理登山裝備。" 
           },
           { 
@@ -292,7 +300,6 @@ const pastTrips = [
             icon: <CloudFog size={16}/>, 
             title: "雲之南道步道＋太平雲梯", 
             description: "約 2 km，預留 1–2 小時，茶園景觀＋吊橋視野，輕鬆散步、攝影取景皆可。",
-            // 修正 2：補上雲之南道/茶園意象圖
             image: "https://pic.pimg.tw/vickytung12/1677136726-2056372517-g.jpg" 
           },
           { 
@@ -325,7 +332,6 @@ const pastTrips = [
             icon: <Mountain size={16}/>, 
             title: "起登：五連峰 O 型", 
             description: "路線：三元宮 → 太平山 → 梨子腳山 → 馬鞍山 → 二尖山 → 大尖山 → 三元宮。全程約 10.5 km。",
-            // 修正 3：補上登山步道意象圖
             image: "https://lh3.googleusercontent.com/pw/AP1GczO6hnRqG_nJxzoBeJIsHNTJeLvbN4JGxa8dciLdJX3cwBEqUu4Cn3ay6rZiT_E_vWdNQQS2khc81txPFJEoFuMwCvFMp3HL7wxFvNSzXnOh7W1Si-KWkKBLdKxFM1rmoy28p0_30tEVhJF2rOehlUsS0w=w3209-h1805-s-no-gm?authuser=1"
           },
           { 
@@ -619,6 +625,7 @@ export default function App() {
                   alt={selectedTrip.title} 
                   className="w-full h-full object-cover"
                   onError={(e) => {
+                    // 自動 fallback 機制：如果 Google 相簿連結失效，自動替換成備用圖片
                     e.target.onerror = null; 
                     e.target.src = "https://images.unsplash.com/photo-1518182170546-0766ce6fec93?q=80&w=800&auto=format&fit=crop";
                   }}
@@ -672,13 +679,8 @@ export default function App() {
                       <DollarSign size={16} /> {selectedTrip.budget}
                     </div>
                   )}
-
-                  <button 
-                    onClick={handleShare}
-                    className="flex items-center gap-2 text-sm text-slate-500 hover:text-teal-600 transition-colors bg-slate-100 px-3 py-2 rounded-lg"
-                  >
-                    <Share2 size={16} /> 分享連結
-                  </button>
+                  
+                  {/* 分享按鈕已刪除 */}
                 </div>
 
                 {/* 過去行程專屬區塊：同行人員 & 相簿連結 */}
@@ -702,11 +704,27 @@ export default function App() {
                           <ImageIcon size={18} /> Google 相簿
                         </a>
                       )}
-                      {selectedTrip.videoUrl && (
+                      
+                      {/* 支援單一影片 (舊資料) */}
+                      {selectedTrip.videoUrl && !selectedTrip.videos && (
                         <a href={selectedTrip.videoUrl} target="_blank" rel="noopener noreferrer" className="flex-1 flex items-center justify-center gap-2 bg-white border border-red-200 text-red-600 hover:bg-red-50 py-2 rounded-lg transition-colors font-medium text-sm">
                           <Youtube size={18} /> 影片紀錄
                         </a>
                       )}
+
+                      {/* 支援多部影片 */}
+                      {selectedTrip.videos && selectedTrip.videos.map((video, idx) => (
+                        <a key={idx} href={video.url} target="_blank" rel="noopener noreferrer" className="flex-1 flex items-center justify-center gap-2 bg-white border border-red-200 text-red-600 hover:bg-red-50 py-2 rounded-lg transition-colors font-medium text-sm min-w-[140px]">
+                          <Youtube size={18} /> {video.title}
+                        </a>
+                      ))}
+
+                      {/* Relive Buttons */}
+                      {selectedTrip.relives && selectedTrip.relives.map((relive, idx) => (
+                        <a key={`relive-${idx}`} href={relive.url} target="_blank" rel="noopener noreferrer" className="flex-1 flex items-center justify-center gap-2 bg-white border border-amber-400 text-amber-600 hover:bg-amber-50 py-2 rounded-lg transition-colors font-medium text-sm min-w-[140px]">
+                          <Activity size={18} /> {relive.title}
+                        </a>
+                      ))}
                     </div>
                   </div>
                 )}
