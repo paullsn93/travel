@@ -241,14 +241,14 @@ const pastTrips = [
       { title: "Day 1 車宿炊煮", url: "https://youtu.be/h5jfewlvLK8" },
       { title: "Day 2 五連峰", url: "https://youtu.be/XHXWnKXdmmA" }
     ],
-    // 新增 Relive 軌跡影片資料
     relives: [
       { title: "雲嘉五連峰縱走", url: "https://www.relive.com/zh-TW/view/v1Owk1yM7EO" },
       { title: "孝子路步道O型", url: "https://www.relive.com/zh-TW/view/vAOZm2Ykpov" }
     ],
     videoUrl: "", 
     rating: 5,
-    budget: "據點：57 秘密基地",
+    // 修改：budget 欄位加入 Google Maps 超連結
+    budget: <span>據點：<a href="https://maps.app.goo.gl/9s31aNSjmMQvbWWi7" target="_blank" rel="noopener noreferrer" className="hover:text-teal-600 underline">57 秘密基地</a></span>,
     checklists: [
       {
         category: "邱家準備",
@@ -278,8 +278,7 @@ const pastTrips = [
           { 
             time: "10:30", 
             icon: <Tent size={16}/>, 
-            // 修改：加入 57 秘密基地超連結
-            title: <span>抵達 <a href="https://www.relive.com/zh-TW/view/vAOZm2Ykpov" target="_blank" rel="noopener noreferrer" className="text-teal-600 underline hover:text-teal-800 font-bold">57 秘密基地</a></span>, 
+            title: <span>抵達 <a href="https://maps.app.goo.gl/9s31aNSjmMQvbWWi7" target="_blank" rel="noopener noreferrer" className="text-teal-600 underline hover:text-teal-800 font-bold">57 秘密基地</a></span>, 
             description: "停好車、調整車內睡眠空間，確認電源、照明與煮食動線，順手整理登山裝備。" 
           },
           { 
